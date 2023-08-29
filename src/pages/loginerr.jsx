@@ -70,7 +70,7 @@ const Login = () => {
           type="primary"
           htmlType="submit"
         >
-          Signup
+          Signin
         </Button>
         <br></br>
         <a href="/forgotpass" style={{ float: "right", color: "213547" }}>
