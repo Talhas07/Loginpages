@@ -8,17 +8,16 @@ import {
   EyeTwoTone,
   LockOutlined,
 } from "@ant-design/icons";
-import { Input, Button, notification } from "antd";
+import { Input, Button, Form } from "antd";
 import * as React from "react";
 const Login = () => {
+  const navigate = useNavigate();
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
-  const navigate = useNavigate();
   const handleLogin = async (e) => {
-    e.preventDefault();
-
     console.log();
     try {
+      e.preventDefault();
       console.log(email, password);
 
       const response = await axios.post("http://localhost:3000/user/login", {
@@ -27,10 +26,6 @@ const Login = () => {
       });
       console.log("Login successful:", response);
       localStorage.setItem("token", response.data.token);
-      notification.success({
-        message: "User has been loggedin successfully",
-        duration: 2,
-      });
       navigate("/success");
       // Handle successful login, e.g., redirect or update user state
     } catch (error) {
@@ -44,28 +39,30 @@ const Login = () => {
     <>
       <h2>Login</h2>
       <form onSubmit={handleLogin}>
-        <Input
-          size="large"
-          name="email"
-          placeholder="Email"
-          onChange={(e) => setEmail(e.target.value)}
-          prefix={<MailOutlined className="site-form-item-icon" />}
-          style={{ width: "800px", height: "70px" }} // Adjust width and height as needed
-        />
-
+        <Form.Item validateStatus="error" hasFeedback help="incorrect email">
+          <Input
+            size="large"
+            name="email"
+            placeholder="Email"
+            onChange={(e) => setEmail(e.target.value)}
+            prefix={<MailOutlined className="site-form-item-icon" />}
+            style={{ width: "800px", height: "70px" }} // Adjust width and height as needed
+          />
+        </Form.Item>
         <br></br>
         <br></br>
-
-        <Input.Password
-          placeholder="input password"
-          name="pass"
-          prefix={<LockOutlined className="site-form-item-icon" />}
-          style={{ width: "800px", height: "70px" }}
-          onChange={(e) => setPassword(e.target.value)}
-          iconRender={(visible) =>
-            visible ? <EyeTwoTone /> : <EyeInvisibleOutlined />
-          }
-        />
+        <Form.Item validateStatus="error" hasFeedback help="incorrect password">
+          <Input.Password
+            placeholder="input password"
+            name="pass"
+            prefix={<LockOutlined className="site-form-item-icon" />}
+            style={{ width: "800px", height: "70px" }}
+            onChange={(e) => setPassword(e.target.value)}
+            iconRender={(visible) =>
+              visible ? <EyeTwoTone /> : <EyeInvisibleOutlined />
+            }
+          />
+        </Form.Item>
         <br></br>
         <br></br>
         <Button

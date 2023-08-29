@@ -1,5 +1,5 @@
 import { useState } from "react";
-
+import axios from "axios";
 import "./App.css";
 import {
   EyeInvisibleOutlined,
@@ -8,16 +8,37 @@ import {
 } from "@ant-design/icons";
 import { Form, Input, Button } from "antd";
 import * as React from "react";
+import { useNavigate } from "react-router-dom";
 
 function Newpass() {
   const [count, setCount] = useState(0);
   const [password, setPassword] = useState("");
   const [confirmPassword, setConfirmPassword] = useState("");
   const [passwordVisible, setPasswordVisible] = React.useState(false);
-
-  const submit = (values) => {
+  const navigate = useNavigate();
+  const submit = async (values) => {
     values.preventDefault();
-    console.log("Success:", values);
+    try {
+      if (password !== confirmPassword) {
+        navigate("/notfound");
+      } else {
+        console.log(password);
+        const user = JSON.parse(localStorage.getItem("user"));
+        const data = {
+          username: user.username,
+          password: password,
+          email: user.email,
+        };
+        const response = await axios.patch(
+          `http://localhost:3000/user/${user._id}`,
+          data
+        );
+        console.log("the password is reset successfullt" + response);
+        navigate("/success");
+      }
+    } catch (err) {
+      console.log(err);
+    }
   };
   const handlePasswordChange = (e) => {
     setPassword(e.target.value);
@@ -70,7 +91,7 @@ function Newpass() {
         <br></br>
         <br></br>{" "}
         <span style={{ float: "right", color: " #6c7578" }}>
-          Already have an account? <a href="URL">Login</a>
+          Already have an account? <a href="/">Login</a>
         </span>
         <br></br>
         <Button
@@ -88,7 +109,7 @@ function Newpass() {
       </form>
       <br></br>
       <span style={{ float: "left", color: " #6c7578" }}>
-        Dont have an account? <a href="URL">Signup</a>
+        Dont have an account? <a href="/register">Signup</a>
       </span>
     </>
   );

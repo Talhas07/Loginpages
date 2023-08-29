@@ -1,5 +1,5 @@
 import { useState } from "react";
-
+import axios from "axios";
 import "./App.css";
 import {
   UserOutlined,
@@ -8,15 +8,33 @@ import {
   EyeTwoTone,
   LockOutlined,
 } from "@ant-design/icons";
-import { Input, Button } from "antd";
+import { Input, Button, notification } from "antd";
 import * as React from "react";
-
+import { useNavigate } from "react-router-dom";
 function Register() {
+  const [username, setUsername] = React.useState("");
+  const [email, setEmail] = React.useState("");
+  const [password, setPassword] = React.useState("");
   const [passwordVisible, setPasswordVisible] = React.useState(false);
-
-  const submit = (values) => {
+  const Navigate = useNavigate();
+  const submit = async (values) => {
     values.preventDefault();
-    console.log("Success:", values);
+    console.log(username, password, email);
+    try {
+      await axios.post("http://localhost:3000/user/register", {
+        username,
+        email,
+        password,
+      });
+      console.log("Success");
+      notification.success({
+        message: "User has been registered successfully",
+        duration: 2,
+      });
+      Navigate("/");
+    } catch (err) {
+      console.log(err);
+    }
   };
 
   return (
@@ -27,6 +45,7 @@ function Register() {
           size="large"
           name="user"
           placeholder="Username"
+          onChange={(e) => setUsername(e.target.value)}
           prefix={<UserOutlined className="site-form-item-icon" />}
           style={{ width: "800px", height: "70px" }}
         />
@@ -36,6 +55,7 @@ function Register() {
         <Input
           size="large"
           name="email"
+          onChange={(e) => setEmail(e.target.value)}
           placeholder="Email"
           prefix={<MailOutlined className="site-form-item-icon" />}
           style={{ width: "800px", height: "70px" }} // Adjust width and height as needed
@@ -47,6 +67,7 @@ function Register() {
         <Input.Password
           placeholder="input password"
           name="pass"
+          onChange={(e) => setPassword(e.target.value)}
           prefix={<LockOutlined className="site-form-item-icon" />}
           style={{ width: "800px", height: "70px" }}
           iconRender={(visible) =>
@@ -65,7 +86,7 @@ function Register() {
       </form>
       <br></br>
       <span style={{ float: "left" }}>
-        Already have an account?<a href="URL"> Link Text</a>
+        Already have an account?<a href="/"> Login</a>
       </span>
     </>
   );

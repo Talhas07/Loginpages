@@ -1,22 +1,35 @@
 import { useState } from "react";
-
+import axios from "axios";
+import { useNavigate } from "react-router-dom";
 import "./App.css";
 import {
- 
   EyeInvisibleOutlined,
+  MailOutlined,
   EyeTwoTone,
-  LockOutlined,
 } from "@ant-design/icons";
 import { Form, Input, Button } from "antd";
 import * as React from "react";
 
 function Forgetpass() {
+  const [email, setEmail] = React.useState("");
+  const navigate = useNavigate();
 
-  const [passwordVisible, setPasswordVisible] = React.useState(false);
-
-  const submit = (values) => {
+  const submit = async (values) => {
     values.preventDefault();
-    console.log("Success:", values);
+    try {
+      console.log("Success:", values);
+      console.log(email);
+      const response = await axios.get(
+        `http://localhost:3000/user/findbymail/${email}`
+      );
+
+      console.log(response);
+      localStorage.setItem("user", JSON.stringify(response.data)); // Storing response as JSON string
+      navigate("/newpass");
+    } catch (error) {
+      console.error("Error:", error);
+      navigate("/notfound"); // Handle error appropriately, e.g., show error message to the user
+    }
   };
 
   return (
@@ -26,37 +39,17 @@ function Forgetpass() {
       <br></br>
       <br></br>
       <form onSubmit={submit}>
-        <Form.Item
-          validateStatus="error"
-          hasFeedback
-          help="Password incorrect "
-        >
-          <Input.Password
-            placeholder="input password"
-            name="pass"
-            prefix={<LockOutlined className="site-form-item-icon" />}
-            style={{ width: "800px", height: "70px" }}
-            iconRender={(visible) =>
-              visible ? <EyeTwoTone /> : <EyeInvisibleOutlined />
-            }
-          />
-        </Form.Item>
-        <Input.Password
-          validateStatus="error"
-          hasFeedback
-          help="Should have something"
-          placeholder="input password"
-          name="pass"
-          prefix={<LockOutlined className="site-form-item-icon" />}
+        <Input
+          placeholder="input email"
+          name="email"
+          onChange={(e) => setEmail(e.target.value)}
+          prefix={<MailOutlined className="site-form-item-icon" />}
           style={{ width: "800px", height: "70px" }}
-          iconRender={(visible) =>
-            visible ? <EyeTwoTone /> : <EyeInvisibleOutlined />
-          }
         />
         <br></br>
         <br></br>{" "}
         <span style={{ float: "right", color: " #6c7578" }}>
-          Already have an account? <a href="URL">Login</a>
+          Already have an account? <a href="/">Login</a>
         </span>
         <br></br>
         <Button
@@ -74,7 +67,7 @@ function Forgetpass() {
       </form>
       <br></br>
       <span style={{ float: "left", color: " #6c7578" }}>
-        Dont have an account? <a href="URL">Signup</a>
+        Dont have an account? <a href="/register">Signup</a>
       </span>
     </>
   );

@@ -1,12 +1,11 @@
-import { useState } from "react";
-import reactLogo from "./assets/react.svg";
-import viteLogo from "/vite.svg";
 import "./App.css";
 
 import { Input, Button } from "antd";
 import * as React from "react";
+import { useNavigate } from "react-router-dom";
 
 function Success() {
+  const Navigate = useNavigate();
   const submit = (values) => {
     values.preventDefault();
     console.log("Success:", values);
@@ -24,6 +23,9 @@ function Success() {
         }}
         type="primary"
         htmlType="submit"
+        onClick={() => {
+          Navigate("/");
+        }}
       >
         Back to Login
       </Button>
